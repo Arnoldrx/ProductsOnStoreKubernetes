@@ -13,19 +13,26 @@ spec:
         app: mvc
     spec:
       containers:
-        - name: mvc
-          image: arnoldrx/product-store-mvc:v1.0
-          ports:
-            - containerPort: 80
-          env:
-            - name: ConnectionStrings_ProductsContext
-              valueFrom:
-                secretKeyRef:
-                  name: mssql-secret
-                  key: db-connection-string-secret
-                # configMapKeyRef:
-                #   name: mssql-conncection-configmap
-                #   key: db-connection-string
+      - name: mvc
+        image: arnoldrx/product-store-mvc:v1.0
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            cpu: 300m
+            memory: "100Mi"
+          requests:
+            cpu: 100m
+            memory: "50Mi"
+        env:
+        - name: ConnectionStrings_ProductsContext
+          valueFrom:
+            secretKeyRef:
+              name: mssql-secret
+              key: db-connection-string-secret
+            # configMapKeyRef:
+#   name: mssql-conncection-configmap
+#   key: db-connection-string
 ---
 kind: Service
 apiVersion: v1
@@ -36,7 +43,7 @@ spec:
   selector:
     app: mvc
   ports:
-    - protocol: TCP
-      port: 80
-      targetPort: 80
-      nodePort: 30100
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+    nodePort: 30100
